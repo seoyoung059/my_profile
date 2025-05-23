@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Taylor Marshall - Digital Business Card</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <style>
+      :root {
+        --primary: #2c3e50;
+        --accent: #f7cac9;
+        --text: #ffffff;
+        --contrast-text: #000000;
+        --shinhan-blue: #0046ff;
+      }
+      body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: linear-gradient(rgba(44, 62, 80, 0.6), rgba(44, 62, 80, 0.6)),
+          url('https://images.unsplash.com/photo-1538669715315-155098f0fb1d') center/cover no-repeat fixed;
+        color: var(--text);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+        min-height: 100vh;
+        background-attachment: fixed;
+      }
+      .card {
+        background: #fff;
+        color: var(--contrast-text);
+        border-radius: 16px;
+        max-width: 800px;
+        width: 100%;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+        overflow: hidden;
+        transition: transform 0.3s ease;
+        display: grid;
+        grid-template-columns: 300px 1fr;
+      }
+      .card:hover {
+        transform: translateY(-5px);
+      }
+      .header {
+        background: linear-gradient(135deg, var(--shinhan-blue), #0033cc);
+        text-align: center;
+        padding: 2rem 1rem;
+        grid-column: 1;
+        grid-row: 1 / span 3;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        min-height: 100%;
+      }
+      .flip-container {
+        perspective: 1000px;
+        width: 180px;
+        height: 180px;
+        margin: 0 auto 30px;
+        cursor: pointer;
+      }
+      .flipper {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        transition: transform 0.8s;
+        transform-style: preserve-3d;
+      }
+      .flip-container:hover .flipper {
+        transform: rotateY(180deg);
+      }
+      .front,
+      .back {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        backface-visibility: hidden;
+        border-radius: 50%;
+        border: 4px solid #fff;
+        box-sizing: border-box;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+      .front {
+        background: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 2;
+        overflow: hidden;
+      }
+      .back {
+        transform: rotateY(180deg);
+        overflow: hidden;
+      }
+      .front img,
+      .back img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 50%;
+      }
+      .front img {
+        width: 80%;
+        height: 80%;
+        object-fit: contain;
+        padding: 10px;
+        background: white;
+      }
+      .character-name {
+        position: absolute;
+        bottom: -25px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(255, 255, 255, 0.9);
+        padding: 2px 8px;
+        border-radius: 10px;
+        font-size: 0.8em;
+        color: var(--shinhan-blue);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+      .flip-container:hover .character-name {
+        opacity: 1;
+      }
+      .header h1 {
+        margin: 0;
+        font-size: 1.5rem;
+        color: white;
+      }
+      .header p {
+        margin: 5px 0;
+        color: rgba(255, 255, 255, 0.9);
+      }
+      .icons {
+        display: flex;
+        justify-content: space-around;
+        padding: 1rem;
+        background: var(--shinhan-blue);
+        grid-column: 2;
+      }
+      .icons a {
+        color: white;
+        text-decoration: none;
+        font-size: 1.2rem;
+        transition: transform 0.3s ease;
+      }
+      .icons a:hover {
+        transform: scale(1.2);
+      }
+      .info {
+        padding: 1rem;
+        font-size: 0.95rem;
+        line-height: 1.4;
+        grid-column: 2;
+      }
+      .info a {
+        color: var(--shinhan-blue);
+        text-decoration: none;
+      }
+      .socials {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        padding: 1rem;
+        grid-column: 2;
+      }
+      .socials a {
+        display: flex;
+        align-items: center;
+        padding: 0.5rem 1rem;
+        background: var(--shinhan-blue);
+        color: white;
+        border-radius: 10px;
+        text-decoration: none;
+        font-weight: bold;
+        transition: transform 0.3s ease, background-color 0.3s ease;
+      }
+      .socials a:hover {
+        transform: translateX(10px);
+        background-color: #0033cc;
+      }
+      .socials a span {
+        margin-left: 10px;
+        transition: transform 0.3s ease;
+      }
+      .socials a:hover span:first-child {
+        transform: scale(1.5);
+      }
+
+      @media (max-width: 768px) {
+        .card {
+          grid-template-columns: 1fr;
+        }
+        
+        .header {
+          grid-column: 1;
+          grid-row: auto;
+        }
+        
+        .icons, .info, .socials {
+          grid-column: 1;
+        }
+      }
+
+      .info p {
+        padding: 0.5rem 0;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+      }
+      
+      .info p:last-child {
+        border-bottom: none;
+      }
+      
+      .korean-address {
+        font-size: 0.9em;
+        color: #666;
+        margin-top: 0.2rem;
+      }
+
+      .profile-info {
+        margin-top: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <div class="card" role="main">
+        <div class="header">
+          <div class="flip-container">
+            <div class="flipper">
+              <div class="front">
+                <img :src="ssolLogo" alt="Shinhan Financial Group Logo" />
+                <div class="character-name">Shinhan Financial Group</div>
+              </div>
+              <div class="back">
+                <img :src="profileImage" :alt="name + ' profile photo'" />
+              </div>
+            </div>
+          </div>
+          <div class="profile-info">
+            <h1>{{ name }}</h1>
+            <p>{{ position }}</p>
+            <p><strong>{{ company }}</strong></p>
+          </div>
+        </div>
+        <div class="icons">
+          <a :href="'tel:' + phone" :aria-label="'Call ' + name">📞</a>
+          <a :href="'mailto:' + email" :aria-label="'Email ' + name">✉️</a>
+          <a
+            :href="website"
+            target="_blank"
+            rel="noopener"
+            :aria-label="'Visit ' + name + '\'s Website'"
+            >🌐</a
+          >
+          <a :href="mapUrl" target="_blank" rel="noopener" aria-label="Find us on map">📍</a>
+        </div>
+        <div class="info">
+          <p><strong>Phone:</strong> <a :href="'tel:' + phone">{{ formattedPhone }}</a></p>
+          <p><strong>Fax:</strong> <a>{{ fax }}</a></p>
+          <p><strong>Email:</strong> <a :href="'mailto:' + email">{{ email }}</a></p>
+          <p>
+            <strong>Address:</strong>
+            <a :href="mapUrl" target="_blank" rel="noopener">{{ address }}</a>
+            <div class="korean-address">{{ koreanAddress }}</div>
+          </p>
+        </div>
+        <div class="socials">
+          <a
+            v-for="social in socials"
+            :key="social.name"
+            :href="social.url"
+            target="_blank"
+            rel="noopener"
+            :aria-label="'Visit ' + social.name + ' page'"
+          >
+            <span>{{ social.icon }}</span> <span>{{ social.name }}</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const { createApp } = Vue;
+
+      createApp({
+        data() {
+          return {
+            name: "Seoyoung Kim",
+            position: "Core Developer",
+            company: "Shinhan Bank",
+            phone: "+82-10-1234-5678",
+            fax: "+82-2-1234-5678",
+            email: "asdf@shinhan.com",
+            website: "https://www.shinhan.com",
+            address: "7F Samsung Main Building, 67 Taepyeong-ro, Jung-gu, Seoul, Korea",
+            koreanAddress: "서울특별시 중구 태평로 67 삼성본관 7층",
+            ssolLogo:
+              "https://www.pngkey.com/png/detail/798-7985667_shinhan-financial-group-logo.png",
+            profileImage: "https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg",
+            socials: [
+              {
+                name: "GitHub",
+                url: "https://github.com/seoyoungkim",
+                icon: "💻"
+              },
+              {
+                name: "LinkedIn",
+                url: "https://linkedin.com/in/seoyoungkim",
+                icon: "👔"
+              },
+              {
+                name: "Shinhan Email",
+                url: "mailto:asdf@shinhan.com",
+                icon: "📧"
+              }
+            ],
+          };
+        },
+        computed: {
+          mapUrl() {
+            return `https://maps.google.com/?q=${encodeURIComponent(this.address)}`;
+          },
+          formattedPhone() {
+            return this.phone.replace(/(\+\d)(\d{3})(\d{3})(\d{3})/, "$1 ($2) $3-$4");
+          },
+        },
+      }).mount("#app");
+    </script>
+  </body>
+</html>
